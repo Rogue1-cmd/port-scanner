@@ -1,3 +1,8 @@
+# This is a simple chat server.
+# It allows multiple clients to connect and send messages to each other.
+# The server broadcasts each message to all connected clients.
+# The server also keeps track of the nicknames of all connected clients.
+
 import threading
 import socket
 
@@ -11,10 +16,12 @@ server.listen()
 clients = []
 nicknames = []
 
+# This function broadcasts a message to all connected clients.
 def broadcast(message):
     for client in clients:
         client.send(message)
 
+# This function handles each client connection.
 def handle(client):
     while True:
         try:
@@ -26,19 +33,19 @@ def handle(client):
             client.close()
             nickname = nicknames[index]
             nicknames.remove(nickname)
-            broadcast(f'{nickname} ameleft!!'.encode('ascii'))
-            nicknames.remove(nickname)
+            broadcast(f'{nickname} left the chat!'.encode('ascii'))
             break
 
+# This function accepts new client connections.
 def receive():
     while True:
         client, address = server.accept()
-        print("connected with {str(address)}") 
+        print(f"connected with {str(address)}") 
 
         client.send('NICK'.encode('ascii'))
         nickname = client.recv(1024)
-        nickname.append(client)
-        client.append(client)
+        nicknames.append(nickname)
+        clients.append(client)
 
         print(f"Nickname of the client is {nickname}!")
         broadcast(f'{nickname} joined the chat !'.encode('ascii'))
@@ -50,7 +57,4 @@ def receive():
 
 print("Server is listening...")
 receive()
-
-
-
 
